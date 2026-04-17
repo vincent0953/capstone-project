@@ -6,34 +6,69 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   min-height: 100vh;
 }
 
-/* CONTAINER STYLES */
+/* ================= BACKGROUND OVERLAY FOR ALL PAGES ================= */
+.backgroundOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('/background.png'); /* Change this to your image path */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  z-index: -1;
+}
+
+/* Dark overlay for better readability */
+.backgroundOverlay::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7));
+}
+
+/* ================= CONTAINER STYLES ================= */
+.container,
+.reportContainer,
+.adminContainer {
+  position: relative;
+  min-height: 100vh;
+  z-index: 1;
+}
+
 .container {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
   padding: 20px;
 }
 
+/* ================= CARD STYLES ================= */
 .card {
   background: white;
   border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   width: 100%;
   max-width: 480px;
   padding: 40px;
   transition: transform 0.3s ease;
+  position: relative;
+  z-index: 2;
 }
 
 .card:hover {
   transform: translateY(-5px);
 }
 
-/* HEADER STYLES */
+/* ================= HEADER STYLES ================= */
 .header {
   text-align: center;
   margin-bottom: 32px;
@@ -51,18 +86,49 @@ body {
   color: #718096;
 }
 
-/* FORM STYLES */
+/* ================= LOGO STYLES ================= */
+.logoContainer {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.imageLogo {
+  max-width: 80px;
+  height: auto;
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.imageLogo:hover {
+  transform: scale(1.05);
+}
+
+.logoDivider {
+  width: 40px;
+  height: 2px;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  margin: 8px auto 0;
+  border-radius: 2px;
+}
+
+/* ================= FORM STYLES ================= */
+.authForm {
+  padding: 0;
+}
+
 .authForm h3 {
   font-size: 24px;
   font-weight: 600;
   color: #2d3748;
   margin-bottom: 8px;
+  text-align: center;
 }
 
 .formDescription {
   font-size: 14px;
   color: #718096;
   margin-bottom: 24px;
+  text-align: center;
 }
 
 .formGroup {
@@ -100,11 +166,11 @@ body {
   border-color: #cbd5e0;
 }
 
-/* BUTTON STYLES */
+/* ================= BUTTON STYLES ================= */
 .submitBtn {
   width: 100%;
   padding: 12px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
   color: white;
   border: none;
   border-radius: 8px;
@@ -117,14 +183,14 @@ body {
 
 .submitBtn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 10px 20px rgba(220, 38, 38, 0.3);
 }
 
 .submitBtn:active {
   transform: translateY(0);
 }
 
-/* TOGGLE AUTH STYLES */
+/* ================= TOGGLE AUTH STYLES ================= */
 .toggleAuth {
   margin-top: 24px;
   text-align: center;
@@ -148,7 +214,21 @@ body {
   text-decoration: underline;
 }
 
-/* ALERT STYLES */
+.adminLink {
+  margin-top: 12px !important;
+  padding-top: 12px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.adminLink span {
+  color: #e53e3e !important;
+}
+
+.adminLink span:hover {
+  color: #c53030 !important;
+}
+
+/* ================= ALERT STYLES ================= */
 .error {
   background-color: #fed7d7;
   color: #c53030;
@@ -169,14 +249,12 @@ body {
   border-left: 4px solid #276749;
 }
 
-/* REPORT PAGE STYLES */
+/* ================= USER REPORT PAGE STYLES ================= */
 .reportContainer {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  padding: 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 40px 20px;
 }
 
 .reportCard {
@@ -186,13 +264,14 @@ body {
   width: 100%;
   max-width: 600px;
   overflow: hidden;
+  position: relative;
+  z-index: 2;
 }
 
 .reportHeader {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   padding: 30px;
-  text-align: center;
 }
 
 .reportHeader h2 {
@@ -206,19 +285,39 @@ body {
   opacity: 0.9;
 }
 
+.votersIdBadge {
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.2);
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-top: 8px;
+}
+
+.topLogoutBtn {
+  background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.topLogoutBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(229, 62, 62, 0.3);
+}
+
 .reportContent {
   padding: 30px;
 }
 
-.reportContent h3 {
-  font-size: 20px;
-  font-weight: 600;
-  color: #2d3748;
-  margin-bottom: 20px;
-}
-
 .reportSelect,
-.reportInput {
+.reportInput,
+.textarea {
   width: 100%;
   padding: 12px 16px;
   font-size: 14px;
@@ -230,219 +329,30 @@ body {
 }
 
 .textarea {
-  width: 100%;
-  padding: 12px 16px;
-  font-size: 14px;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
   resize: vertical;
   min-height: 120px;
-  font-family: inherit;
 }
 
-.textarea:focus,
 .reportSelect:focus,
-.reportInput:focus {
+.reportInput:focus,
+.textarea:focus {
   border-color: #667eea;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
-.buttonGroup {
-  display: flex;
-  gap: 12px;
-  margin-top: 20px;
-}
-
-.logoutBtn {
-  flex: 1;
-  padding: 12px;
-  background: #e2e8f0;
-  color: #4a5568;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.logoutBtn:hover {
-  background: #cbd5e0;
-  transform: translateY(-2px);
-}
-
-/* TRACKING PAGE STYLES */
-.trackingContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  padding: 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-.trackingCard {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-  width: 100%;
-  max-width: 700px;
-  overflow: hidden;
-}
-
-.trackingHeader {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 30px;
-  text-align: center;
-}
-
-.trackingHeader h2 {
-  font-size: 28px;
-  font-weight: 600;
-  margin-bottom: 8px;
-}
-
-.trackingSubtitle {
-  font-size: 14px;
-  opacity: 0.9;
-}
-
-.trackingContent {
-  padding: 30px;
-}
-
-.statusBadge {
-  text-align: center;
-  margin-bottom: 24px;
-}
-
-.status {
-  display: inline-block;
-  padding: 10px 24px;
-  border-radius: 50px;
-  font-weight: 700;
-  font-size: 14px;
-  letter-spacing: 1px;
-}
-
-.status.pending {
-  background: #fed7d7;
-  color: #c53030;
-  animation: pulse 2s infinite;
-}
-
-.status.responding {
-  background: #feebc8;
-  color: #c05621;
-  animation: pulse 2s infinite;
-}
-
-.status.resolved {
-  background: #c6f6d5;
-  color: #276749;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.7;
-  }
-}
-
-.reportDetails {
-  background: #f7fafc;
-  padding: 20px;
-  border-radius: 12px;
-  margin-bottom: 24px;
-}
-
-.reportDetails h3 {
-  color: #2d3748;
-  margin-bottom: 16px;
-  font-size: 18px;
-  border-bottom: 2px solid #e2e8f0;
-  padding-bottom: 8px;
-}
-
-.detailRow {
-  margin-bottom: 12px;
-  line-height: 1.5;
-  color: #4a5568;
-}
-
-.detailRow strong {
-  display: inline-block;
-  width: 120px;
-  color: #2d3748;
-}
-
-.statusMessage {
-  margin-top: 8px;
-  padding: 12px;
-  background: #e2e8f0;
-  border-radius: 8px;
-  font-style: italic;
-}
-
-.newReportBtn, .viewAllBtn {
-  flex: 1;
-  padding: 12px;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.newReportBtn {
-  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-  color: white;
-}
-
-.viewAllBtn {
-  background: #4299e1;
-  color: white;
-}
-
-.newReportBtn:hover, .viewAllBtn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
-
-/* LOCATION BUTTON STYLES */
-.locationBtn {
-  width: 100%;
-  padding: 10px;
-  margin-top: 10px;
-  background: #f59e0b;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-
-.locationBtn:hover {
-  background: #d97706;
-  transform: translateY(-2px);
-}
-
-/* ADMIN DASHBOARD STYLES */
+/* ================= ADMIN PANEL STYLES ================= */
 .adminContainer {
   min-height: 100vh;
-  background: #f7fafc;
+  position: relative;
 }
 
 .adminHeader {
-  background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+  background: linear-gradient(135deg, #065f46 0%, #047857 100%);
   color: white;
   padding: 20px 30px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 2;
 }
 
 .adminHeaderContent {
@@ -471,7 +381,7 @@ body {
 }
 
 .statBox {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.15);
   padding: 10px 20px;
   border-radius: 8px;
   text-align: center;
@@ -481,7 +391,7 @@ body {
 
 .statBox:hover {
   transform: translateY(-3px);
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.25);
 }
 
 .statNumber {
@@ -496,7 +406,7 @@ body {
 }
 
 .adminLogoutBtn {
-  background: #e53e3e;
+  background: #dc2626;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -507,7 +417,7 @@ body {
 }
 
 .adminLogoutBtn:hover {
-  background: #c53030;
+  background: #b91c1c;
   transform: translateY(-2px);
 }
 
@@ -515,6 +425,8 @@ body {
   max-width: 1400px;
   margin: 0 auto;
   padding: 30px;
+  position: relative;
+  z-index: 2;
 }
 
 .reportsTableContainer {
@@ -598,32 +510,32 @@ body {
 }
 
 .respondBtn {
-  background: #ed8936;
+  background: #10b981;
   color: white;
 }
 
 .respondBtn:hover {
-  background: #dd6b20;
+  background: #059669;
   transform: translateY(-1px);
 }
 
 .resolveBtn {
-  background: #48bb78;
+  background: #3b82f6;
   color: white;
 }
 
 .resolveBtn:hover {
-  background: #38a169;
+  background: #2563eb;
   transform: translateY(-1px);
 }
 
-.viewBtn {
-  background: #4299e1;
+.deleteBtn {
+  background: #ef4444;
   color: white;
 }
 
-.viewBtn:hover {
-  background: #3182ce;
+.deleteBtn:hover {
+  background: #dc2626;
   transform: translateY(-1px);
 }
 
@@ -633,73 +545,8 @@ body {
   color: #718096;
 }
 
-/* ADMIN LINK STYLES */
-.adminLink {
-  margin-top: 15px !important;
-  padding-top: 10px;
-  border-top: 1px solid #e2e8f0;
-}
-
-.adminLink span {
-  color: #e53e3e !important;
-  font-weight: 600;
-}
-
-.adminLink span:hover {
-  color: #c53030 !important;
-}
-
-/* ADMIN CREDENTIALS DISPLAY */
-.adminCredentials {
-  margin-top: 15px;
-  padding: 10px;
-  background: #f7fafc;
-  border-radius: 8px;
-  text-align: center;
-}
-
-.adminCredentials small {
-  display: block;
-  color: #4a5568;
-  font-size: 11px;
-  margin: 3px 0;
-}
-
-.adminCredentials strong {
-  color: #2d3748;
-}
-
-/* RESPONSIVE DESIGN */
-@media (max-width: 1024px) {
-  .adminHeaderContent {
-    flex-direction: column;
-    text-align: center;
-  }
-  
-  .reportsTable {
-    font-size: 12px;
-  }
-  
-  .reportsTable th,
-  .reportsTable td {
-    padding: 8px;
-  }
-  
-  .actionBtn {
-    padding: 4px 8px;
-    font-size: 10px;
-  }
-}
-
+/* ================= RESPONSIVE DESIGN ================= */
 @media (max-width: 768px) {
-  .reportsTableContainer {
-    overflow-x: auto;
-  }
-  
-  .reportsTable {
-    min-width: 800px;
-  }
-  
   .card {
     padding: 24px;
   }
@@ -708,14 +555,17 @@ body {
     font-size: 24px;
   }
   
-  .reportHeader h2,
-  .trackingHeader h2 {
+  .reportHeader h2 {
     font-size: 24px;
   }
   
-  .reportContent,
-  .trackingContent {
+  .reportContent {
     padding: 20px;
+  }
+  
+  .adminHeaderContent {
+    flex-direction: column;
+    text-align: center;
   }
   
   .adminStats {
@@ -723,22 +573,16 @@ body {
     justify-content: center;
   }
   
-  .statBox {
-    min-width: 70px;
-    padding: 8px 15px;
+  .reportsTable {
+    min-width: 800px;
   }
   
-  .statNumber {
-    font-size: 22px;
+  .reportsTableContainer {
+    overflow-x: auto;
   }
   
-  .detailRow strong {
-    display: block;
-    margin-bottom: 4px;
-  }
-  
-  .actionButtons {
-    flex-direction: column;
+  .imageLogo {
+    max-width: 60px;
   }
 }
 
@@ -751,8 +595,7 @@ body {
     font-size: 20px;
   }
   
-  .submitBtn,
-  .logoutBtn {
+  .submitBtn {
     font-size: 14px;
     padding: 10px;
   }
@@ -760,45 +603,5 @@ body {
   .formGroup input,
   .formGroup select {
     padding: 10px 12px;
-  }
-}
-/* TOP LOGOUT BUTTON STYLES */
-.topLogoutBtn {
-  background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.topLogoutBtn:hover {
-  background: linear-gradient(135deg, #c53030 0%, #9b2c2c 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(229, 62, 62, 0.3);
-}
-
-.topLogoutBtn:active {
-  transform: translateY(0);
-}
-
-/* Update responsive design for mobile */
-@media (max-width: 640px) {
-  .reportHeader > div {
-    flex-direction: column;
-    gap: 15px;
-    text-align: center;
-  }
-  
-  .topLogoutBtn {
-    width: 100%;
-    justify-content: center;
   }
 }

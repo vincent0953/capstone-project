@@ -6,6 +6,8 @@ type User = {
   fullName: string;
   email: string;
   password: string;
+  votersId: string;
+  address: string;
 };
 
 type Report = {
@@ -17,6 +19,7 @@ type Report = {
   status: "pending" | "responding" | "resolved";
   reporter_name: string;
   reporter_email: string;
+  reporter_voters_id: string;
 };
 
 export default function App() {
@@ -33,6 +36,8 @@ export default function App() {
     fullName: "",
     email: "",
     password: "",
+    votersId: "",
+    address: "",
   });
 
   const [login, setLogin] = useState({
@@ -61,32 +66,71 @@ export default function App() {
     if (data) setReports(data);
   };
 
-  // ✅ SIGNUP
+  // Helper function to clear messages
+  const clearMessages = () => {
+    setError("");
+    setSuccess("");
+  };
+
+  // Auto clear messages after 3 seconds
+  const autoClearMessages = () => {
+    setTimeout(() => {
+      setError("");
+      setSuccess("");
+    }, 3000);
+  };
+
+  // ✅ SIGNUP with Voter's ID validation
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+    clearMessages(); // Clear previous messages
+
+    // Validate Voter's ID format (example: 8-12 characters alphanumeric)
+    const votersIdRegex = /^[A-Z0-9]{8,12}$/i;
+    if (!votersIdRegex.test(form.votersId)) {
+      setError("Please enter a valid Voter's ID (8-12 alphanumeric characters)");
+      autoClearMessages();
+      return;
+    }
+
+    // Check if Voter's ID already exists
+    const { data: existingUser } = await supabase
+      .from("users")
+      .select("voters_id")
+      .eq("voters_id", form.votersId)
+      .single();
+
+    if (existingUser) {
+      setError("This Voter's ID is already registered");
+      autoClearMessages();
+      return;
+    }
 
     const { error } = await supabase.from("users").insert([
       {
         full_name: form.fullName,
         email: form.email,
         password: form.password,
+        voters_id: form.votersId,
+        address: form.address,
       },
     ]);
 
     if (error) {
       setError(error.message);
+      autoClearMessages();
     } else {
       setSuccess("Account created! Please login.");
+      autoClearMessages();
       setShowLogin(true);
-      setForm({ fullName: "", email: "", password: "" });
+      setForm({ fullName: "", email: "", password: "", votersId: "", address: "" });
     }
   };
 
   // ✅ LOGIN
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+    clearMessages(); // Clear previous messages (this fixes the issue!)
 
     const { data, error } = await supabase
       .from("users")
@@ -97,6 +141,7 @@ export default function App() {
 
     if (error || !data) {
       setError("Invalid credentials");
+      autoClearMessages();
       return;
     }
 
@@ -104,26 +149,33 @@ export default function App() {
       fullName: data.full_name,
       email: data.email,
       password: data.password,
+      votersId: data.voters_id,
+      address: data.address,
     });
 
     setIsLoggedIn(true);
+    clearMessages(); // Clear messages on successful login
   };
 
   // ✅ ADMIN LOGIN
   const handleAdminLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    clearMessages(); // Clear previous messages
 
     if (adminLogin.username === "admin" && adminLogin.password === "admin123") {
       setIsAdmin(true);
       setShowAdminPanel(false);
+      clearMessages();
     } else {
       setError("Invalid admin login");
+      autoClearMessages();
     }
   };
 
   // ✅ SUBMIT REPORT
   const handleSubmitReport = async (e: React.FormEvent) => {
     e.preventDefault();
+    clearMessages();
 
     const newReport = {
       id: "RPT-" + Math.random().toString(36).substr(2, 8).toUpperCase(),
@@ -133,14 +185,17 @@ export default function App() {
       status: "pending",
       reporter_name: user!.fullName,
       reporter_email: user!.email,
+      reporter_voters_id: user!.votersId,
     };
 
     const { error } = await supabase.from("reports").insert([newReport]);
 
     if (error) {
       setError(error.message);
+      autoClearMessages();
     } else {
       setSuccess("Report submitted!");
+      autoClearMessages();
       setReportData({ type: "", location: "", description: "" });
       fetchReports();
     }
@@ -150,6 +205,22 @@ export default function App() {
   const updateStatus = async (id: string, status: string) => {
     await supabase.from("reports").update({ status }).eq("id", id);
     fetchReports();
+  };
+
+  // ✅ DELETE REPORT
+  const deleteReport = async (id: string) => {
+    if (window.confirm("Are you sure you want to delete this report? This action cannot be undone.")) {
+      const { error } = await supabase.from("reports").delete().eq("id", id);
+      
+      if (error) {
+        setError(error.message);
+        setTimeout(() => setError(""), 3000);
+      } else {
+        setSuccess("Report deleted successfully!");
+        fetchReports(); // Refresh the list
+        setTimeout(() => setSuccess(""), 3000);
+      }
+    }
   };
 
   // ================= ADMIN DASHBOARD =================
@@ -194,6 +265,8 @@ export default function App() {
         <div className="adminContent">
           <div className="reportsTableContainer">
             <h2>📊 All Incident Reports</h2>
+            {error && <div className="error">{error}</div>}
+            {success && <div className="success">{success}</div>}
             {reports.length === 0 ? (
               <div className="noReports">No reports submitted yet.</div>
             ) : (
@@ -205,8 +278,10 @@ export default function App() {
                       <th>Type</th>
                       <th>Location</th>
                       <th>Reporter</th>
+                      <th>Voter's ID</th>
                       <th>Status</th>
                       <th>Actions</th>
+                      <th>Delete</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -216,6 +291,7 @@ export default function App() {
                         <td>{r.type}</td>
                         <td>{r.location}</td>
                         <td>{r.reporter_name}</td>
+                        <td className="votersIdCell">{r.reporter_voters_id || "N/A"}</td>
                         <td>
                           <span className={`statusBadge ${r.status}`}>
                             {r.status.charAt(0).toUpperCase() + r.status.slice(1)}
@@ -239,6 +315,14 @@ export default function App() {
                             </button>
                           )}
                         </td>
+                        <td>
+                          <button
+                            className="actionBtn deleteBtn"
+                            onClick={() => deleteReport(r.id)}
+                          >
+                            🗑️ Delete
+                          </button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -260,6 +344,7 @@ export default function App() {
             <div>
               <h2>📝 New Incident Report</h2>
               <p className="reportSubtitle">Welcome, {user.fullName}</p>
+              <p className="votersIdBadge">🪪 Voter's ID: {user.votersId}</p>
             </div>
             <button className="topLogoutBtn" onClick={() => setIsLoggedIn(false)}>
               🚪 Logout
@@ -323,12 +408,25 @@ export default function App() {
     );
   }
 
-  // ================= LOGIN / SIGNUP =================
+  // ================= LOGIN / SIGNUP WITH LOGO AND BACKGROUND =================
   return (
     <div className="container">
+      {/* Background overlay for better readability */}
+      <div className="backgroundOverlay"></div>
+      
       <div className="card">
         <div className="header">
-          <h1 className="title">🏘️ Barangay System</h1>
+          {/* LOGO SECTION */}
+          <div className="logoContainer">
+            <img 
+              src="/image.png" 
+              alt="Barangay Giligaon Logo" 
+              className="imageLogo"
+            />
+            <div className="logoDivider"></div>
+          </div>  
+          
+          <h1 className="title">🏘️ Barangay Giligaon System</h1>
           <p className="subtitle">Community Incident Reporting Platform</p>
         </div>
 
@@ -365,6 +463,31 @@ export default function App() {
                   </div>
 
                   <div className="formGroup">
+                    <label>Voter's ID (Required for Barangay Giligson Residents)</label>
+                    <input
+                      type="text"
+                      placeholder="Enter your Voter's ID (e.g., GIL12345678)"
+                      value={form.votersId}
+                      onChange={(e) => setForm({ ...form, votersId: e.target.value.toUpperCase() })}
+                      required
+                    />
+                    <small style={{ color: '#718096', fontSize: '11px', marginTop: '4px', display: 'block' }}>
+                      Must be 8-12 alphanumeric characters
+                    </small>
+                  </div>
+
+                  <div className="formGroup">
+                    <label>Barangay Address</label>
+                    <input
+                      type="text"
+                      placeholder="Enter your complete address in Barangay Giligson"
+                      value={form.address}
+                      onChange={(e) => setForm({ ...form, address: e.target.value })}
+                      required
+                    />
+                  </div>
+
+                  <div className="formGroup">
                     <label>Password</label>
                     <input
                       type="password"
@@ -382,11 +505,17 @@ export default function App() {
                   <div className="toggleAuth">
                     <p>
                       Already have an account?{" "}
-                      <span onClick={() => setShowLogin(true)}>Login here</span>
+                      <span onClick={() => {
+                        clearMessages();
+                        setShowLogin(true);
+                      }}>Login here</span>
                     </p>
                     <p className="adminLink">
                       Are you an admin?{" "}
-                      <span onClick={() => setShowAdminPanel(true)}>Admin Login</span>
+                      <span onClick={() => {
+                        clearMessages();
+                        setShowAdminPanel(true);
+                      }}>Admin Login</span>
                     </p>
                   </div>
                 </form>
@@ -425,11 +554,17 @@ export default function App() {
                   <div className="toggleAuth">
                     <p>
                       Don't have an account?{" "}
-                      <span onClick={() => setShowLogin(false)}>Sign up</span>
+                      <span onClick={() => {
+                        clearMessages();
+                        setShowLogin(false);
+                      }}>Sign up</span>
                     </p>
                     <p className="adminLink">
                       Are you an admin?{" "}
-                      <span onClick={() => setShowAdminPanel(true)}>Admin Login</span>
+                      <span onClick={() => {
+                        clearMessages();
+                        setShowAdminPanel(true);
+                      }}>Admin Login</span>
                     </p>
                   </div>
                 </form>
@@ -469,13 +604,11 @@ export default function App() {
 
               <div className="toggleAuth">
                 <p>
-                  <span onClick={() => setShowAdminPanel(false)}>← Back to User Login</span>
+                  <span onClick={() => {
+                    clearMessages();
+                    setShowAdminPanel(false);
+                  }}>← Back to User Login</span>
                 </p>
-              </div>
-              <div className="adminCredentials">
-                <small>Demo Admin Credentials:</small>
-                <small><strong>Username:</strong> admin</small>
-                <small><strong>Password:</strong> admin123</small>
               </div>
             </form>
           </div>
