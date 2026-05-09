@@ -1,30 +1,51 @@
+/* GLOBAL RESET & BASE */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-  min-height: 100vh;
+:root {
+  --primary: #0F766E;      /* teal - main brand, emergency, actions */
+  --secondary: #DC2626;    /* red - ONLY for logout buttons */
+  --neutral: #64748B;      /* slate - borders, secondary text, non-critical */
+  --white: #ffffff;
+  --black: #000000;
+  --transparent: transparent;
 }
 
-/* ================= BACKGROUND OVERLAY FOR ALL PAGES ================= */
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  font-size: 20px;        /* increased from 18px for better readability */
+  line-height: 1.5;
+  overflow-x: hidden;
+  min-height: 100vh;
+  background-color: #f8fafc;
+}
+
+/* ================= BACKGROUND OVERLAY ================= */
 .backgroundOverlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url('/background.png'); /* Change this to your image path */
+  width: 100%;
+  height: 100%;
+  background-image: url('/background.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
   z-index: -1;
 }
-
-/* Dark overlay for better readability */
 .backgroundOverlay::before {
   content: '';
   position: absolute;
@@ -32,576 +53,1538 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7));
+  background: rgba(0, 0, 0, 0.5);
 }
 
-/* ================= CONTAINER STYLES ================= */
+/* ================= CONTAINERS ================= */
 .container,
 .reportContainer,
-.adminContainer {
-  position: relative;
+.adminContainer,
+.homeContainer,
+.emergencyContainer,
+.trackingContainer,
+.reportsContainer,
+.responderContainer {
   min-height: 100vh;
+  width: 100%;
+  margin: 0;
+  padding: 20px;
+  position: relative;
   z-index: 1;
 }
-
+.adminContainer {
+  padding: 0 !important;
+}
 .container {
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 20px;
+  align-items: flex-start;
 }
 
-/* ================= CARD STYLES ================= */
-.card {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+/* ================= CARDS ================= */
+.card,
+.reportCard,
+.emergencyCard,
+.trackingCard,
+.reportsCard {
+  background: var(--white);
+  border-radius: 24px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 480px;
-  padding: 40px;
-  transition: transform 0.3s ease;
-  position: relative;
-  z-index: 2;
+  overflow: hidden;
+  margin: 0 auto;
 }
-
+.card {
+  max-width: 640px;       /* slightly wider for larger text */
+  padding: 55px;
+  transition: transform 0.3s ease;
+}
 .card:hover {
   transform: translateY(-5px);
 }
+.reportCard { max-width: 850px; }
+.emergencyCard { max-width: 850px; }
+.trackingCard { max-width: 850px; }
+.reportsCard { max-width: 1200px; }
 
-/* ================= HEADER STYLES ================= */
+/* ================= HEADER & TEXT ================= */
 .header {
   text-align: center;
-  margin-bottom: 32px;
+  margin-bottom: 55px;
 }
-
+.collegeName,
+.barangayTitle,
+.giligaonTitle,
 .title {
-  font-size: 28px;
-  font-weight: 600;
-  color: #2d3748;
-  margin-bottom: 8px;
+  color: var(--primary);
 }
-
+.collegeName {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 15px 0 8px;
+  letter-spacing: 1px;
+}
+.barangayTitle {
+  font-size: 3.3rem;
+  font-weight: 800;
+  margin-bottom: 0;
+}
+.giligaonTitle {
+  font-size: 3.8rem;
+  font-weight: 800;
+  margin-top: -8px;
+  margin-bottom: 15px;
+}
+.title {
+  font-size: 42px;
+  font-weight: 800;
+  margin-bottom: 15px;
+}
 .subtitle {
-  font-size: 14px;
-  color: #718096;
+  font-size: 24px;
+  color: var(--neutral);
 }
 
-/* ================= LOGO STYLES ================= */
+/* ================= LOGO ================= */
 .logoContainer {
   text-align: center;
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
+  background: transparent;
 }
-
 .imageLogo {
-  max-width: 80px;
-  height: auto;
-  display: inline-block;
+  width: 180px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 50%;
   transition: transform 0.3s ease;
+  background: transparent !important;
+  mix-blend-mode: multiply;
 }
-
 .imageLogo:hover {
   transform: scale(1.05);
 }
-
 .logoDivider {
-  width: 40px;
-  height: 2px;
-  background: linear-gradient(90deg, #667eea, #764ba2);
-  margin: 8px auto 0;
-  border-radius: 2px;
+  width: 100px;
+  height: 4px;
+  background: var(--primary);
+  margin: 20px auto 0;
+  border-radius: 4px;
+}
+.homeLogoContainer {
+  margin-bottom: 45px;
+  text-align: center;
+  background: transparent;
+}
+.homeLogo {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 50%;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+  transition: transform 0.3s ease;
+  background: transparent !important;
+  mix-blend-mode: multiply;
+}
+.homeLogo:hover {
+  transform: scale(1.05);
 }
 
-/* ================= FORM STYLES ================= */
+/* ================= FORMS ================= */
 .authForm {
   padding: 0;
 }
-
 .authForm h3 {
-  font-size: 24px;
-  font-weight: 600;
-  color: #2d3748;
-  margin-bottom: 8px;
-  text-align: center;
-}
-
-.formDescription {
-  font-size: 14px;
-  color: #718096;
-  margin-bottom: 24px;
-  text-align: center;
-}
-
-.formGroup {
+  font-size: 38px;
+  font-weight: 800;
+  color: #0f172a;
   margin-bottom: 20px;
+  text-align: center;
 }
-
+.formDescription {
+  font-size: 22px;
+  color: var(--neutral);
+  margin-bottom: 38px;
+  text-align: center;
+}
+.formGroup {
+  margin-bottom: 32px;
+}
 .formGroup label {
   display: block;
-  font-size: 14px;
-  font-weight: 500;
-  color: #4a5568;
-  margin-bottom: 8px;
+  font-size: 22px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 12px;
 }
-
 .formGroup input,
 .formGroup select {
   width: 100%;
-  padding: 12px 16px;
-  font-size: 14px;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
+  padding: 18px 24px;
+  font-size: 22px;
+  border: 1px solid #cbd5e1;
+  border-radius: 14px;
   transition: all 0.3s ease;
   outline: none;
   font-family: inherit;
+  background: var(--white);
 }
-
 .formGroup input:focus,
 .formGroup select:focus {
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.1);
 }
-
 .formGroup input:hover,
 .formGroup select:hover {
-  border-color: #cbd5e0;
+  border-color: var(--neutral);
 }
 
-/* ================= BUTTON STYLES ================= */
+/* ================= BUTTONS (PRIMARY) ================= */
 .submitBtn {
   width: 100%;
-  padding: 12px;
-  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-  color: white;
+  padding: 20px;
+  background: var(--primary);
+  color: var(--white);
   border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
+  border-radius: 16px;
+  font-size: 24px;
+  font-weight: 800;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-top: 8px;
+  margin-top: 20px;
 }
-
 .submitBtn:hover {
+  filter: brightness(0.85);
   transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(220, 38, 38, 0.3);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
-
 .submitBtn:active {
   transform: translateY(0);
 }
 
-/* ================= TOGGLE AUTH STYLES ================= */
+/* ================= TOGGLE AUTH ================= */
 .toggleAuth {
-  margin-top: 24px;
+  margin-top: 38px;
   text-align: center;
 }
-
 .toggleAuth p {
-  font-size: 14px;
-  color: #718096;
+  font-size: 22px;
+  color: var(--neutral);
 }
-
 .toggleAuth span {
-  color: #667eea;
+  color: var(--primary);
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 700;
   text-decoration: none;
   transition: color 0.3s ease;
 }
-
 .toggleAuth span:hover {
-  color: #764ba2;
+  filter: brightness(0.85);
   text-decoration: underline;
 }
-
 .adminLink {
-  margin-top: 12px !important;
-  padding-top: 12px;
+  margin-top: 25px !important;
+  padding-top: 25px;
   border-top: 1px solid #e2e8f0;
 }
-
 .adminLink span {
-  color: #e53e3e !important;
+  color: var(--primary) !important;
 }
-
 .adminLink span:hover {
-  color: #c53030 !important;
+  filter: brightness(0.85);
 }
 
-/* ================= ALERT STYLES ================= */
-.error {
-  background-color: #fed7d7;
-  color: #c53030;
-  padding: 12px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  font-size: 14px;
-  border-left: 4px solid #c53030;
-}
-
+/* ================= ALERTS ================= */
+.error,
 .success {
-  background-color: #c6f6d5;
-  color: #276749;
-  padding: 12px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  font-size: 14px;
-  border-left: 4px solid #276749;
+  padding: 18px;
+  border-radius: 14px;
+  margin-bottom: 32px;
+  font-size: 22px;
+  border-left-width: 6px;
+}
+.error {
+  background-color: #fee2e2;
+  color: var(--primary);
+  border-left: 6px solid var(--primary);
+}
+.success {
+  background-color: #dcfce7;
+  color: var(--primary);
+  border-left: 6px solid var(--primary);
 }
 
-/* ================= USER REPORT PAGE STYLES ================= */
-.reportContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 40px 20px;
-}
-
-.reportCard {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-  width: 100%;
-  max-width: 600px;
-  overflow: hidden;
-  position: relative;
-  z-index: 2;
-}
-
+/* ================= USER REPORT PAGE ================= */
 .reportHeader {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 30px;
+  background: var(--primary);
+  color: var(--white);
+  padding: 45px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-
 .reportHeader h2 {
-  font-size: 28px;
-  font-weight: 600;
-  margin-bottom: 8px;
+  font-size: 42px;
+  font-weight: 800;
+  margin-bottom: 15px;
 }
-
 .reportSubtitle {
-  font-size: 14px;
+  font-size: 24px;
   opacity: 0.9;
 }
-
 .votersIdBadge {
-  font-size: 12px;
+  font-size: 20px;
   background: rgba(255, 255, 255, 0.2);
   display: inline-block;
-  padding: 4px 12px;
-  border-radius: 20px;
-  margin-top: 8px;
+  padding: 10px 22px;
+  border-radius: 50px;
+  margin-top: 15px;
 }
-
 .topLogoutBtn {
-  background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
-  color: white;
+  background: var(--secondary);
+  color: var(--white);
   border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
+  padding: 16px 32px;
+  border-radius: 14px;
+  font-size: 22px;
+  font-weight: 800;
   cursor: pointer;
   transition: all 0.3s ease;
 }
-
 .topLogoutBtn:hover {
+  filter: brightness(0.85);
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(229, 62, 62, 0.3);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
-
 .reportContent {
-  padding: 30px;
+  padding: 45px;
 }
-
 .reportSelect,
 .reportInput,
 .textarea {
   width: 100%;
-  padding: 12px 16px;
-  font-size: 14px;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
+  padding: 18px 24px;
+  font-size: 22px;
+  border: 1px solid #cbd5e1;
+  border-radius: 14px;
   transition: all 0.3s ease;
   outline: none;
   font-family: inherit;
+  background: var(--white);
 }
-
 .textarea {
   resize: vertical;
-  min-height: 120px;
+  min-height: 200px;
 }
-
 .reportSelect:focus,
 .reportInput:focus,
 .textarea:focus {
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.1);
 }
 
-/* ================= ADMIN PANEL STYLES ================= */
-.adminContainer {
-  min-height: 100vh;
-  position: relative;
-}
-
+/* ================= ADMIN PANEL ================= */
 .adminHeader {
-  background: linear-gradient(135deg, #065f46 0%, #047857 100%);
-  color: white;
-  padding: 20px 30px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  position: relative;
-  z-index: 2;
+  background: var(--primary);
+  color: var(--white);
+  padding: 25px 35px;
+  margin: 0;
+  width: 100%;
+  border-radius: 0;
 }
-
 .adminHeaderContent {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 1400px;
-  margin: 0 auto;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 25px;
 }
-
-.adminHeaderContent h1 {
-  font-size: 24px;
-  margin-bottom: 5px;
+.adminTitleSection {
+  flex: 1;
 }
-
-.adminHeaderContent p {
-  opacity: 0.8;
-  font-size: 14px;
+.adminTitle {
+  font-size: 2.8rem;
+  font-weight: 800;
+  margin: 0 0 8px 0;
+  color: var(--white);
 }
-
-.adminStats {
-  display: flex;
-  gap: 15px;
+.adminSubtitle {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  margin: 0;
+  color: var(--white);
 }
-
-.statBox {
-  background: rgba(255, 255, 255, 0.15);
-  padding: 10px 20px;
-  border-radius: 8px;
-  text-align: center;
-  min-width: 80px;
-  transition: transform 0.3s ease;
-}
-
-.statBox:hover {
-  transform: translateY(-3px);
-  background: rgba(255, 255, 255, 0.25);
-}
-
-.statNumber {
-  display: block;
-  font-size: 28px;
-  font-weight: bold;
-}
-
-.statLabel {
-  font-size: 12px;
-  opacity: 0.8;
-}
-
 .adminLogoutBtn {
-  background: #dc2626;
-  color: white;
+  background: var(--secondary);
+  color: var(--white);
   border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
+  padding: 14px 32px;
+  border-radius: 12px;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 800;
+  font-size: 1.2rem;
   transition: all 0.3s ease;
 }
-
 .adminLogoutBtn:hover {
-  background: #b91c1c;
+  filter: brightness(0.85);
+  transform: translateY(-2px);
+}
+.adminStatsWrapper {
+  display: flex;
+  justify-content: center;
+  padding: 25px 0;
+  background: #f1f5f9;
+}
+.adminStats {
+  display: flex;
+  gap: 25px;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 1200px;
+  width: 100%;
+}
+.statBox {
+  background: var(--white);
+  padding: 16px 30px;
+  border-radius: 16px;
+  text-align: center;
+  min-width: 120px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.statNumber {
+  display: block;
+  font-size: 40px;
+  font-weight: bold;
+  color: var(--primary);
+}
+.statLabel {
+  font-size: 16px;
+  color: var(--neutral);
+}
+.adminContent {
+  padding: 35px;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+}
+.reportsTableContainer {
+  background: var(--white);
+  border-radius: 24px;
+  padding: 35px;
+  width: 100%;
+  overflow-x: auto;
+  box-sizing: border-box;
+}
+.reportsTableContainer h2 {
+  margin-bottom: 32px;
+  color: #0f172a;
+  font-size: 36px;
+}
+.reportsTable {
+  width: 100%;
+  min-width: 1100px;
+  border-collapse: collapse;
+}
+.reportsTable thead {
+  background: #f1f5f9;
+}
+.reportsTable th,
+.reportsTable td {
+  padding: 22px 16px;
+  text-align: left;
+  font-size: 20px;
+  border-bottom: 1px solid #e2e8f0;
+}
+.reportRow:hover {
+  background: #f8fafc;
+}
+.reportId {
+  font-family: monospace;
+  font-weight: 700;
+  color: var(--primary);
+  font-size: 20px;
+}
+.statusBadge {
+  display: inline-block;
+  padding: 10px 18px;
+  border-radius: 40px;
+  font-size: 18px;
+  font-weight: 700;
+}
+.statusBadge.pending {
+  background: #fee2e2;
+  color: var(--primary);
+}
+.statusBadge.responding {
+  background: #ffedd5;
+  color: #ea580c;
+}
+.statusBadge.resolved {
+  background: #dcfce7;
+  color: var(--primary);
+}
+.actionBtn {
+  padding: 12px 20px;
+  margin: 0 8px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+.respondBtn {
+  background: var(--primary);
+  color: var(--white);
+}
+.respondBtn:hover {
+  filter: brightness(0.85);
+  transform: translateY(-1px);
+}
+.resolveBtn {
+  background: var(--primary);
+  color: var(--white);
+}
+.resolveBtn:hover {
+  filter: brightness(0.85);
+  transform: translateY(-1px);
+}
+.deleteBtn {
+  background: var(--primary);
+  color: var(--white);
+}
+.deleteBtn:hover {
+  filter: brightness(0.85);
+  transform: translateY(-1px);
+}
+.noReports {
+  text-align: center;
+  padding: 100px;
+  color: var(--neutral);
+  font-size: 24px;
+}
+.exportBottomWrapper {
+  text-align: center;
+  margin-top: 35px;
+  padding: 25px 0;
+}
+.exportBtn {
+  background: var(--primary);
+  color: var(--white);
+  border: none;
+  padding: 16px 40px;
+  border-radius: 40px;
+  font-size: 1.2rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.exportBtn:hover {
+  filter: brightness(0.85);
   transform: translateY(-2px);
 }
 
-.adminContent {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 30px;
-  position: relative;
-  z-index: 2;
+/* ================= CAMERA ================= */
+.cameraSection {
+  margin-top: 20px;
 }
-
-.reportsTableContainer {
-  background: white;
-  border-radius: 12px;
+.cameraBtn {
+  width: 100%;
   padding: 20px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background: var(--primary);
+  color: var(--white);
+  border: none;
+  border-radius: 16px;
+  font-size: 24px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.cameraBtn:hover {
+  filter: brightness(0.85);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(15, 118, 110, 0.3);
+}
+.cameraContainer {
+  margin-top: 20px;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #000;
+}
+.cameraPreview {
+  width: 100%;
+  max-height: 550px;
+  object-fit: cover;
+  background: #000;
+}
+.cameraButtons {
+  display: flex;
+  gap: 18px;
+  padding: 22px;
+  background: #1a1a1a;
+}
+.captureBtn,
+.cancelBtn {
+  flex: 1;
+  padding: 18px;
+  border: none;
+  border-radius: 14px;
+  font-size: 24px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.captureBtn {
+  background: var(--primary);
+  color: var(--white);
+}
+.captureBtn:hover {
+  filter: brightness(0.85);
+  transform: translateY(-2px);
+}
+.cancelBtn {
+  background: var(--primary);
+  color: var(--white);
+}
+.cancelBtn:hover {
+  filter: brightness(0.85);
+  transform: translateY(-2px);
+}
+.photoPreview {
+  margin-top: 20px;
+  text-align: center;
+}
+.previewImage {
+  max-width: 100%;
+  max-height: 450px;
+  border-radius: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.photoButtons {
+  margin-top: 18px;
+}
+.retakeBtn {
+  padding: 16px 32px;
+  background: var(--primary);
+  color: var(--white);
+  border: none;
+  border-radius: 14px;
+  font-size: 22px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.retakeBtn:hover {
+  filter: brightness(0.85);
+  transform: translateY(-2px);
 }
 
-.reportsTableContainer h2 {
-  margin-bottom: 20px;
-  color: #2d3748;
+/* ================= LOCATION BUTTON ================= */
+.locationBtn {
+  width: 100%;
+  padding: 18px;
+  margin-top: 18px;
+  background: var(--primary);
+  color: var(--white);
+  border: none;
+  border-radius: 14px;
+  font-size: 22px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.locationBtn:hover {
+  filter: brightness(0.85);
+  transform: translateY(-2px);
 }
 
-.reportsTable {
+/* ================= INFO MESSAGE ================= */
+.info {
+  background-color: #e0f2fe;
+  color: #0369a1;
+  padding: 18px;
+  border-radius: 14px;
+  margin-bottom: 32px;
+  font-size: 22px;
+  border-left: 6px solid #0369a1;
+}
+
+/* ================= THUMBNAIL IMAGE ================= */
+.thumbnailImage {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.thumbnailImage:hover {
+  transform: scale(1.1);
+}
+.mapLink {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 20px;
+}
+.mapLink:hover {
+  text-decoration: underline;
+}
+
+/* ================= HOME PAGE ================= */
+.homeContainer {
+  background: transparent;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+.homeOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+}
+.homeContent {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  color: var(--white);
+  padding: 80px 20px;
+  max-width: 1500px;
+  margin: 0 auto;
+}
+.homeTitle {
+  font-size: 5rem;
+  font-weight: 900;
+  margin-bottom: 40px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  color: var(--white);
+}
+.homeSubtitle {
+  font-size: 2rem;
+  margin-bottom: 90px;
+  opacity: 0.9;
+  line-height: 1.5;
+  letter-spacing: 0.5px;
+}
+.emergencyHomeBtn {
+  display: block;
+  width: 80%;
+  max-width: 600px;
+  margin: 0 auto 80px;
+  padding: 28px;
+  background: var(--primary);
+  color: var(--white);
+  border: none;
+  border-radius: 80px;
+  font-size: 2.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  animation: pulse 2s infinite;
+  box-shadow: 0 5px 20px rgba(15, 118, 110, 0.5);
+}
+.emergencyHomeBtn:hover {
+  transform: scale(1.05);
+  filter: brightness(0.85);
+  box-shadow: 0 10px 30px rgba(15, 118, 110, 0.7);
+}
+.homeFeatures {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 50px;
+  margin-bottom: 90px;
+  justify-items: center;
+  align-items: center;
+}
+.featureCard {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  padding: 55px 35px;
+  border-radius: 32px;
+  transition: transform 0.3s ease;
+  text-align: center;
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+}
+.featureCard:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.25);
+}
+.emergencyFeature {
+  border: 2px solid var(--primary);
+  background: rgba(15, 118, 110, 0.2);
+}
+.featureIcon {
+  display: none;
+}
+.featureCard h3 {
+  font-size: 2.2rem;
+  margin-bottom: 22px;
+}
+.featureCard p {
+  font-size: 1.4rem;
+  opacity: 0.9;
+  line-height: 1.5;
+  margin-bottom: 30px;
+}
+.featureBtn {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 16px 36px;
+  background: var(--primary);
+  color: var(--white);
+  border: none;
+  border-radius: 18px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+.featureBtn.emergency {
+  background: var(--primary);
+}
+.featureBtn.emergency:hover {
+  filter: brightness(0.85);
+}
+.featureBtn:hover {
+  transform: translateY(-2px);
+  filter: brightness(0.85);
+}
+.homeButtons {
+  display: flex;
+  gap: 40px;
+  justify-content: center;
+  margin-bottom: 60px;
+}
+.homeBtn {
+  padding: 20px 50px;
+  font-size: 1.5rem;
+  font-weight: 800;
+  border: 2px solid var(--white);
+  border-radius: 70px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: transparent;
+  color: var(--white);
+}
+.homeBtn:hover {
+  background: var(--white);
+  color: var(--primary);
+  transform: translateY(-2px);
+}
+.homeBtn:active {
+  transform: translateY(1px);
+  background: rgba(255, 255, 255, 0.3);
+  color: var(--white);
+}
+.homeFooter {
+  font-size: 1.2rem;
+  opacity: 0.7;
+}
+
+/* ================= EMERGENCY PAGE ================= */
+.emergencyContainer {
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.emergencyOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+}
+.emergencyCard {
+  position: relative;
+  z-index: 1;
+  background: var(--white);
+  border-radius: 32px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+.emergencyHeader {
+  background: var(--primary);
+  color: var(--white);
+  padding: 50px;
+  text-align: center;
+}
+.emergencyIcon {
+  display: none;
+}
+.emergencyHeader h1 {
+  font-size: 3rem;
+  margin: 20px 0;
+  color: var(--white);
+}
+.emergencyContent {
+  padding: 50px;
+}
+.emergencySuccess {
+  background: var(--primary);
+  color: var(--white);
+  border-left-color: var(--white);
+  font-weight: bold;
+  font-size: 1.2rem;
+  text-align: center;
+}
+.emergencyLocationBtn {
+  background: var(--primary);
+}
+.emergencyLocationBtn:hover {
+  filter: brightness(0.85);
+}
+.emergencyCameraBtn {
+  background: var(--primary);
+}
+.emergencyCameraBtn:hover {
+  filter: brightness(0.85);
+}
+.emergencySubmitBtn {
+  width: 100%;
+  padding: 22px;
+  background: var(--primary);
+  color: var(--white);
+  border: none;
+  border-radius: 18px;
+  font-size: 1.6rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 30px;
+}
+.emergencySubmitBtn:hover {
+  transform: translateY(-2px);
+  filter: brightness(0.85);
+  box-shadow: 0 10px 20px rgba(15, 118, 110, 0.4);
+}
+.backToHomeBtn {
+  width: 100%;
+  padding: 20px;
+  background: #e2e8f0;
+  color: #1e293b;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 22px;
+  font-weight: 700;
+}
+.backToHomeBtn:hover {
+  background: #cbd5e1;
+}
+.emergencyRow {
+  background: rgba(15, 118, 110, 0.1);
+  border-left: 6px solid var(--primary);
+}
+.emergencyType {
+  color: var(--primary);
+  font-weight: bold;
+}
+.emergencyBadge {
+  display: inline-block;
+  background: var(--primary);
+  color: var(--white);
+  font-size: 16px;
+  padding: 8px 18px;
+  border-radius: 50px;
+  margin-left: 15px;
+  animation: pulse 1s infinite;
+}
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+
+/* ================= TRACKING PAGE ================= */
+.trackingContainer {
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.trackingCard {
+  background: var(--white);
+  border-radius: 32px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+.trackingHeader {
+  background: var(--primary);
+  color: var(--white);
+  padding: 50px;
+  text-align: center;
+}
+.trackingIcon {
+  display: none;
+}
+.trackingHeader h1 {
+  font-size: 3rem;
+  margin-bottom: 22px;
+}
+.trackingContent {
+  padding: 50px;
+}
+.trackingInputGroup {
+  display: flex;
+  gap: 22px;
+  margin-bottom: 50px;
+}
+.trackingInput {
+  flex: 1;
+  padding: 22px 26px;
+  font-size: 22px;
+  border: 1px solid #cbd5e1;
+  border-radius: 18px;
+  outline: none;
+  transition: all 0.3s ease;
+  background: var(--white);
+}
+.trackingInput:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.1);
+}
+.trackingBtn {
+  padding: 22px 38px;
+  background: var(--primary);
+  color: var(--white);
+  border: none;
+  border-radius: 18px;
+  font-weight: 800;
+  font-size: 22px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.trackingBtn:hover {
+  filter: brightness(0.85);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(15, 118, 110, 0.3);
+}
+.trackingResult {
+  background: #f8fafc;
+  border-radius: 22px;
+  padding: 38px;
+  margin-bottom: 38px;
+}
+.trackingResult h3 {
+  color: #0f172a;
+  margin-bottom: 30px;
+  padding-bottom: 18px;
+  border-bottom: 2px solid #e2e8f0;
+  font-size: 32px;
+}
+.trackingDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+.trackingRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 30px;
+}
+.trackingLabel {
+  width: 180px;
+  font-weight: 800;
+  color: var(--neutral);
+  font-size: 22px;
+}
+.trackingValue {
+  flex: 1;
+  color: #1e293b;
+  word-break: break-word;
+  font-size: 22px;
+}
+.trackingStatus {
+  display: inline-block;
+  padding: 10px 22px;
+  border-radius: 50px;
+  font-size: 20px;
+  font-weight: 700;
+}
+.trackingStatus.pending {
+  background: #fee2e2;
+  color: var(--primary);
+}
+.trackingStatus.responding {
+  background: #ffedd5;
+  color: #ea580c;
+}
+.trackingStatus.resolved {
+  background: #dcfce7;
+  color: var(--primary);
+}
+.trackingMapLink {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 800;
+}
+.trackingMapLink:hover {
+  text-decoration: underline;
+}
+
+/* ================= USER REPORTS (MY REPORTS) ================= */
+.reportsContainer {
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.reportsHeader {
+  background: var(--primary);
+  color: var(--white);
+  padding: 50px;
+  text-align: center;
+  position: relative;
+}
+.reportsHeader h2 {
+  font-size: 2.8rem;
+  margin-bottom: 22px;
+}
+.backToReportBtn {
+  position: absolute;
+  top: 35px;
+  left: 35px;
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--white);
+  border: none;
+  padding: 14px 28px;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 20px;
+  font-weight: 700;
+}
+.backToReportBtn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+.reportsContent {
+  padding: 50px;
+}
+.userReportsList {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+.userReportCard {
+  background: var(--white);
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  transition: transform 0.2s ease;
+}
+.userReportCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.userReportHeader {
+  background: #f8fafc;
+  padding: 28px 36px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e2e8f0;
+}
+.userReportId {
+  font-family: monospace;
+  font-weight: 800;
+  color: var(--primary);
+  font-size: 24px;
+}
+.userReportBody {
+  padding: 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+.userReportRow {
+  font-size: 22px;
+  color: var(--neutral);
+  line-height: 1.5;
+}
+.userReportRow strong {
+  color: #0f172a;
+  width: 180px;
+  display: inline-block;
+  font-size: 22px;
+}
+.viewPhotoLink {
+  color: var(--primary);
+  text-decoration: none;
+  margin-left: 18px;
+  font-weight: 700;
+}
+.viewPhotoLink:hover {
+  text-decoration: underline;
+}
+.myReportsBtn {
+  background: var(--primary);
+  color: var(--white);
+  border: none;
+  padding: 16px 32px;
+  border-radius: 14px;
+  font-size: 22px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.myReportsBtn:hover {
+  filter: brightness(0.85);
+  transform: translateY(-2px);
+}
+
+/* ================= RESPONDER DASHBOARD ================= */
+.responderContainer {
+  background: #f1f5f9;
+  padding: 40px;
+}
+.responderHeader {
+  background: var(--white);
+  padding: 38px;
+  border-radius: 24px;
+  margin-bottom: 38px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.responderHeader h1 {
+  font-size: 38px;
+  color: #0f172a;
+}
+.responderHeader p {
+  font-size: 22px;
+  color: var(--neutral);
+}
+.emergencyReportsList {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+.emergencyCard {
+  background: var(--white);
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-left: 8px solid var(--primary);
+}
+.emergencyCardHeader {
+  background: #fef2f2;
+  padding: 28px 36px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #fecaca;
+}
+.emergencyId {
+  font-weight: bold;
+  font-family: monospace;
+  color: var(--primary);
+  font-size: 24px;
+}
+.emergencyCardBody {
+  padding: 36px;
+}
+.emergencyCardBody p {
+  margin: 18px 0;
+  font-size: 22px;
+}
+.actionButtons {
+  margin-top: 30px;
+  display: flex;
+  gap: 22px;
+}
+.responderLoginBtn {
+  width: 100%;
+  margin-top: 22px;
+  background: var(--primary);
+  color: var(--white);
+  padding: 20px;
+  border: none;
+  border-radius: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 24px;
+}
+.responderLoginBtn:hover {
+  filter: brightness(0.85);
+}
+.logoutBtn {
+  background: var(--secondary);
+  color: var(--white);
+  border: none;
+  padding: 14px 32px;
+  border-radius: 14px;
+  cursor: pointer;
+  font-size: 22px;
+  font-weight: 700;
+}
+.logoutBtn:hover {
+  filter: brightness(0.85);
+}
+
+/* ================= ADMIN RESPONDER TABLE ================= */
+.responderSection {
+  background: var(--white);
+  border-radius: 24px;
+  padding: 38px;
+  margin-bottom: 50px;
+}
+.responderSection h3 {
+  font-size: 34px;
+  margin-bottom: 30px;
+  color: #0f172a;
+}
+.addResponderForm {
+  display: flex;
+  gap: 22px;
+  flex-wrap: wrap;
+  margin: 30px 0;
+}
+.addResponderForm input {
+  flex: 1;
+  padding: 18px;
+  border: 1px solid #cbd5e1;
+  border-radius: 14px;
+  font-size: 22px;
+  background: var(--white);
+}
+.respondersTable {
   width: 100%;
   border-collapse: collapse;
 }
-
-.reportsTable thead {
-  background: #edf2f7;
-}
-
-.reportsTable th {
-  padding: 12px;
+.respondersTable th,
+.respondersTable td {
+  padding: 18px;
   text-align: left;
-  font-weight: 600;
-  color: #4a5568;
-  font-size: 14px;
-  border-bottom: 2px solid #e2e8f0;
-}
-
-.reportsTable td {
-  padding: 12px;
   border-bottom: 1px solid #e2e8f0;
-  font-size: 14px;
+  font-size: 22px;
+}
+.activeBadge {
+  background: #dcfce7;
+  color: var(--primary);
+  padding: 8px 18px;
+  border-radius: 50px;
+  font-size: 18px;
+}
+.inactiveBadge {
+  background: #fee2e2;
+  color: var(--primary);
+  padding: 8px 18px;
+  border-radius: 50px;
+  font-size: 18px;
 }
 
-.reportRow:hover {
-  background: #f7fafc;
+/* ================= THREE-COLUMN LOGIN GRID ================= */
+.loginGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 50px;
+  max-width: 1700px;
+  margin: 0 auto;
+  padding: 40px;
 }
-
-.reportId {
-  font-family: monospace;
-  font-weight: 600;
-  color: #4299e1;
+.loginColumn {
+  min-width: 0;
 }
-
-.statusBadge {
-  display: inline-block;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
+.loginColumn .card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
-
-.statusBadge.pending {
-  background: #fed7d7;
-  color: #c53030;
+.responderCard {
+  border-top: 8px solid var(--primary);
 }
-
-.statusBadge.responding {
-  background: #feebc8;
-  color: #c05621;
+.adminCard {
+  border-top: 8px solid var(--primary);
 }
-
-.statusBadge.resolved {
-  background: #c6f6d5;
-  color: #276749;
+.responderIcon,
+.adminIcon {
+  display: none;
 }
-
-.actionBtn {
-  padding: 6px 12px;
-  margin: 0 4px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 600;
-  transition: all 0.2s ease;
-}
-
-.respondBtn {
-  background: #10b981;
-  color: white;
-}
-
-.respondBtn:hover {
-  background: #059669;
-  transform: translateY(-1px);
-}
-
-.resolveBtn {
-  background: #3b82f6;
-  color: white;
-}
-
-.resolveBtn:hover {
-  background: #2563eb;
-  transform: translateY(-1px);
-}
-
-.deleteBtn {
-  background: #ef4444;
-  color: white;
-}
-
-.deleteBtn:hover {
-  background: #dc2626;
-  transform: translateY(-1px);
-}
-
-.noReports {
+.backHomeWrapper {
   text-align: center;
-  padding: 50px;
-  color: #718096;
+  margin-top: 50px;
 }
 
-/* ================= RESPONSIVE DESIGN ================= */
-@media (max-width: 768px) {
-  .card {
-    padding: 24px;
+/* ================= SWITCH CAMERA BUTTON ================= */
+.switchCameraBtn {
+  flex: 1;
+  padding: 18px;
+  background: var(--primary);
+  color: var(--white);
+  border: none;
+  border-radius: 14px;
+  font-size: 24px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.switchCameraBtn:hover {
+  filter: brightness(0.85);
+  transform: translateY(-2px);
+}
+
+/* ================= RESPONSIVE (keep text large even on smaller screens) ================= */
+@media (max-width: 1024px) {
+  body {
+    font-size: 18px;
   }
-  
-  .title {
-    font-size: 24px;
-  }
-  
-  .reportHeader h2 {
-    font-size: 24px;
-  }
-  
-  .reportContent {
-    padding: 20px;
-  }
-  
-  .adminHeaderContent {
-    flex-direction: column;
-    text-align: center;
-  }
-  
   .adminStats {
-    flex-wrap: wrap;
-    justify-content: center;
+    gap: 15px;
   }
-  
+  .statBox {
+    padding: 12px 20px;
+  }
+  .statNumber {
+    font-size: 30px;
+  }
   .reportsTable {
-    min-width: 800px;
+    min-width: 1000px;
   }
-  
-  .reportsTableContainer {
-    overflow-x: auto;
+}
+@media (max-width: 900px) {
+  .loginGrid {
+    grid-template-columns: 1fr;
+    gap: 40px;
   }
-  
-  .imageLogo {
-    max-width: 60px;
+  .homeTitle {
+    font-size: 3.2rem;
+  }
+  .homeSubtitle {
+    font-size: 1.5rem;
+  }
+  .emergencyHomeBtn {
+    font-size: 1.6rem;
+  }
+  .featureCard h3 {
+    font-size: 1.8rem;
+  }
+  .featureCard p {
+    font-size: 1.2rem;
+  }
+}
+@media (max-width: 768px) {
+  body {
+    font-size: 18px;
+  }
+  .card {
+    padding: 30px;
+  }
+  .homeTitle {
+    font-size: 2.6rem;
+  }
+  .homeSubtitle {
+    font-size: 1.2rem;
+  }
+  .emergencyHomeBtn {
+    font-size: 1.4rem;
+    padding: 18px;
+  }
+  .featureCard {
+    padding: 35px 25px;
+  }
+  .formGroup input,
+  .formGroup select,
+  .reportSelect,
+  .reportInput,
+  .textarea,
+  .trackingInput {
+    font-size: 18px;
+    padding: 14px 18px;
+  }
+  .submitBtn,
+  .cameraBtn,
+  .captureBtn,
+  .cancelBtn,
+  .emergencySubmitBtn {
+    font-size: 20px;
+    padding: 16px;
+  }
+  .adminTitle {
+    font-size: 2rem;
+  }
+  .reportsTable th,
+  .reportsTable td {
+    font-size: 16px;
+    padding: 15px 10px;
+  }
+  .userReportRow,
+  .userReportRow strong {
+    font-size: 18px;
+  }
+  .trackingLabel,
+  .trackingValue {
+    font-size: 18px;
+  }
+}
+@media (max-width: 480px) {
+  body {
+    font-size: 16px;
+  }
+  .homeTitle {
+    font-size: 2rem;
+  }
+  .homeSubtitle {
+    font-size: 1rem;
+  }
+  .emergencyHomeBtn {
+    font-size: 1.2rem;
+  }
+  .featureCard h3 {
+    font-size: 1.5rem;
+  }
+  .featureCard p {
+    font-size: 1rem;
+  }
+  .card {
+    padding: 22px;
+  }
+  .formGroup label {
+    font-size: 18px;
+  }
+  .submitBtn,
+  .cameraBtn {
+    font-size: 18px;
   }
 }
 
-@media (max-width: 480px) {
-  .card {
-    padding: 20px;
-  }
-  
-  .title {
-    font-size: 20px;
-  }
-  
-  .submitBtn {
-    font-size: 14px;
-    padding: 10px;
-  }
-  
-  .formGroup input,
-  .formGroup select {
-    padding: 10px 12px;
-  }
+/* Admin & Responder Login Buttons */
+.adminLoginBtn,
+.responderLoginBtn {
+  width: 100%;
+  padding: 20px;
+  background: var(--primary);
+  color: var(--white);
+  border: none;
+  border-radius: 16px;
+  font-size: 24px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 20px;
+}
+.adminLoginBtn:hover,
+.responderLoginBtn:hover {
+  filter: brightness(0.85);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+.adminLoginBtn:active,
+.responderLoginBtn:active {
+  transform: translateY(0);
+}
+
+/* Animations */
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.85; }
+  100% { opacity: 1; }
 }
